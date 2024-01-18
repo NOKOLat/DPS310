@@ -5,7 +5,7 @@
  *      Author: ohya
  */
 
-#include <DPS310.h>
+#include "./DPS310.h"
 
 DPS310::DPS310() {
 	// TODO Auto-generated constructor stub

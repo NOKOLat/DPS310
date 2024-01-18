@@ -10,7 +10,7 @@
 #ifndef INC_DPS310_HAL_I2C_H_
 #define INC_DPS310_HAL_I2C_H_
 
-#include <DPS310.h>
+#include "./DPS310.h"
 
 #include "i2c.h"
 

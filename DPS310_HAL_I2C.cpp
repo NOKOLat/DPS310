@@ -7,7 +7,7 @@
 
 #ifdef USE_HAL_DRIVER
 
-#include <DPS310_HAL_I2C.h>
+#include "./DPS310_HAL_I2C.h"
 
 DPS310_HAL_I2C::DPS310_HAL_I2C(I2C_HandleTypeDef *hi2c, I2C_ADDRESS address)
 :hi2c(hi2c),i2cAddress((uint8_t)address){
