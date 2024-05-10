@@ -82,8 +82,20 @@ public:
 	DPS310();
 
 	void setIsNewDataReady(bool isReady = true);
-	float getPressure();
-	float getTemperature();
+	
+	void readRawResults();
+	void readPressure();
+	void readTemperature();
+
+	void calcPressure();
+	void calcTemperature();
+
+	float getPressure(){
+		return pressure;
+	}
+	float getTemperature(){
+		return temperature;
+	}
 
 	void setPressureOversamplingRate(OVERSAMPLING_RATE rate);
 	void setPressureMesurmentRate(MESURMENT_RATE rate);
@@ -163,6 +175,13 @@ protected:
 	uint8_t resetBit(uint8_t arg, uint8_t position);
 
 	int32_t getTwosComplement(int32_t value, uint8_t length);
+
+private:
+	float scaledRawPressure;
+	float scaledRawTemperature;
+
+	float pressure;
+	float temperature;
 
 };
 
