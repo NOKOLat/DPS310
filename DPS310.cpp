@@ -16,26 +16,35 @@ void DPS310::setIsNewDataReady(bool isReady){
 
 }
 
-float DPS310::getPressure(){
+void DPS310::readRawResults(){
 	uint8_t tmp[6];
 	readBytes(REGISTOR::PSR_B2, tmp, 6);
-	int32_t rawPressure = (tmp[0]<<16 & 0xff0000) + (tmp[1]<<8&0xff00) + tmp[2];
-	int32_t rawTemperature = (tmp[3]<<16 & 0xff0000) + (tmp[4]<<8&0xff00) + tmp[5];
-	rawPressure = getTwosComplement(rawPressure, 24);
-	rawTemperature = getTwosComplement(rawTemperature, 24);
-	float scaledRawPressure = rawPressure / (float)scaleFactor[(uint8_t)pressureOversamplingRate];
-	float scaledRawTemperature = rawTemperature / (float)scaleFactor[(uint8_t)temperatureOversamplingRate];
-
-	return c00 + scaledRawPressure*(c10+scaledRawPressure*(c20+scaledRawPressure*c30))+scaledRawTemperature*(c01 + scaledRawPressure*(c11+scaledRawPressure*c21));
+	int32_t decode = (tmp[0]<<16 & 0xff0000) + (tmp[1]<<8&0xff00) + tmp[2];
+	scaledRawPressure = getTwosComplement(decode, 24) / (float)scaleFactor[(uint8_t)pressureOversamplingRate];
+	decode = (tmp[0]<<16 & 0xff0000) + (tmp[1]<<8&0xff00) + tmp[2];
+	scaledRawTemperature = getTwosComplement(decode, 24) / (float)scaleFactor[(uint8_t)temperatureOversamplingRate];
 }
-float DPS310::getTemperature(){
+
+void DPS310::readPressure(){
+	uint8_t tmp[3];
+	readBytes(REGISTOR::PSR_B2, tmp, 3);
+	int32_t decode = (tmp[0]<<16 & 0xff0000) + (tmp[1]<<8&0xff00) + tmp[2];
+	scaledRawPressure = getTwosComplement(decode, 24) / (float)scaleFactor[(uint8_t)pressureOversamplingRate];
+}
+
+void DPS310::readTemperature(){
 	uint8_t tmp[3];
 	readBytes(REGISTOR::TMP_B2, tmp, 3);
-	int32_t rawTemperature = (tmp[0]<<16 & 0xff0000) + (tmp[1]<<8&0xff00) + tmp[2];
-	rawTemperature = getTwosComplement(rawTemperature, 24);
-	float scaledRawTemperature = rawTemperature / (float)scaleFactor[(uint8_t)temperatureOversamplingRate];
+	int32_t decode = (tmp[0]<<16 & 0xff0000) + (tmp[1]<<8&0xff00) + tmp[2];
+	scaledRawTemperature = getTwosComplement(decode, 24) / (float)scaleFactor[(uint8_t)temperatureOversamplingRate];
+}
 
-	return c0*0.5+c1*scaledRawTemperature;
+void DPS310::calcPressure(){
+	pressure = c00 + scaledRawPressure*(c10+scaledRawPressure*(c20+scaledRawPressure*c30))+scaledRawTemperature*(c01 + scaledRawPressure*(c11+scaledRawPressure*c21));
+}
+
+void DPS310::calcTemperature(){
+	temperature = c0*0.5+c1*scaledRawTemperature;
 }
 
 void DPS310::setPressureOversamplingRate(OVERSAMPLING_RATE rate){
