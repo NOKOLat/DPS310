@@ -21,7 +21,7 @@ void DPS310::readRawResults(){
 	readBytes(REGISTOR::PSR_B2, tmp, 6);
 	int32_t decode = (tmp[0]<<16 & 0xff0000) + (tmp[1]<<8&0xff00) + tmp[2];
 	scaledRawPressure = getTwosComplement(decode, 24) / (float)scaleFactor[(uint8_t)pressureOversamplingRate];
-	decode = (tmp[0]<<16 & 0xff0000) + (tmp[1]<<8&0xff00) + tmp[2];
+	decode = (tmp[3]<<16 & 0xff0000) + (tmp[4]<<8&0xff00) + tmp[5];
 	scaledRawTemperature = getTwosComplement(decode, 24) / (float)scaleFactor[(uint8_t)temperatureOversamplingRate];
 }
 
